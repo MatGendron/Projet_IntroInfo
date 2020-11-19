@@ -6,7 +6,7 @@ namespace ProjetPendu
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            Console.WriteLine("Je ne veux pas travailler");
         }
     }
 }
