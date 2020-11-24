@@ -44,6 +44,12 @@ namespace ProjetPendu
         {
 
         }
+        /* Cette fonction redirige TourOrdinateur ou TourJoueur en fonction du nom donné
+         */
+        static void TourDejeu()
+        {
+
+        }
         /* Met fin eu jeu
          */
         static void AbandonJeu()
