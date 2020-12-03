@@ -4,12 +4,26 @@ namespace ProjetPendu
 {
     class Program
     {
-        /* Cette fonction permet d'initialiser un jeu de pendu
-         */
-        static void initialiseJeu()
+        /* Permet de demander à l'utilisateur quel type de partie il veut lancer
+        */
+        static void Partie(string[] lexique)
         {
 
         }
+        /* Initialise une partie où l'ordinateur choisit le mot et l'humain doit le trouver
+        */
+        static void PartieHumain(string[] lexique)
+        {
+
+        }
+        /* Permet à l'ordinateur de choisir un mot aléatoirement dans le dictionnaire
+        */
+        static string ChoisirMotOrdi(string[] lexique)
+        {
+
+        }
+        /* Affiche les règles
+        */
         static void AfficheRegle()
         {
 
