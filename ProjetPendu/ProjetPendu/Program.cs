@@ -22,6 +22,12 @@ namespace ProjetPendu
         {
 
         }
+        /*Cette fonction permet à un joueur humain de jouer un tour
+        */
+        static void TourHumain()
+        {
+
+        }
         /* Affiche les règles
         */
         static void AfficheRegle()
@@ -34,39 +40,9 @@ namespace ProjetPendu
         {
 
         }
-        /* Cette fonction permet à l'ordinateur de choisir un mot au début du jeu
-         */
-        static void ChoisitMotAleatoire()
-        {
-
-        }
-        /* Cette fonction permet à un joueur humain de choisir un mot au début du jeu
-         */
-        static void ChoisitMot()
-        {
-
-        }
-        /*Cette fonction permet à un joueur humain de jouer un tour
-         */
-        static void TourJoueur()
-        {
-
-        }
         /* Cette fonction permet à un ordinateur de jouer un tour
          */
         static void TourOrdinateur()
-        {
-
-        }
-        /* Cette fonction redirige TourOrdinateur ou TourJoueur en fonction du nom donné
-         */
-        static void TourDejeu()
-        {
-
-        }
-        /* Met fin eu jeu
-         */
-        static void AbandonJeu()
         {
 
         }
