@@ -71,6 +71,49 @@ namespace ProjetPendu
 
             return(lexique[position]);
         }
+        /* Cette fonction permet de vérifier si un mot existe dans le lexique
+         */
+        static bool MotExiste(string[] lexique, string mot)
+        {
+            int debut = 0;
+            int fin = lexique.Length-1;
+            int milieu = (fin + debut) / 2;
+            while (lexique[milieu] != mot && milieu > debut)
+            {
+                if (string.Compare(mot, lexique[milieu]) < 0)
+                {
+                    fin = milieu;
+                    milieu = (fin + debut) / 2;
+                }
+                else if (string.Compare(mot,lexique[milieu]) > 0)
+                {
+                    debut = milieu;
+                    milieu = (fin + debut) / 2;
+                }
+            }
+            if (lexique[milieu] == mot)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
+        }
+        /* Permet à un joueur humain de choisir un mot
+         */
+        static string ChoisirMotHumain(string[] lexique)
+        {
+            string solution = "";
+            do
+            {
+                Console.WriteLine("Saisissez un mot solution valide :");
+                solution = Console.ReadLine().ToUpper();
+            } while (!MotExiste(lexique, solution));
+            return solution;
+        }
+
         /*Cette fonction permet à un joueur humain de jouer un tour
         */
         static void TourHumain()
