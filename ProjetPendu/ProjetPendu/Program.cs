@@ -45,10 +45,8 @@ namespace ProjetPendu
 							Console.Write("Je n'ai pas compris. ");
 						}
 					}
-					
 				}
 			}
-
         }
         /* Permet de demander à l'utilisateur quel type de partie il veut lancer
         */
@@ -131,6 +129,34 @@ namespace ProjetPendu
         static void AffichePendu(int degre)
         {
 
+        }
+        /* Fonction convertissant une lettre en sa place dans l'alphabet
+         */
+        static int LettreToInt(char lettre)
+        {
+            lettre = Char.ToUpper(lettre);
+            int code = Convert.ToInt32(lettre)-Convert.ToInt32('A');
+            if(code >=0 && code <= 25)
+            {
+                return code;
+            }
+            else
+            {
+                return -1;
+            }
+        }
+        /* Fonction convertissant un entier en la lettre correspondante dans l'alphabet
+         */
+        static char IntToLettre(int code)
+        {
+            if(code >=0 && code <= 25)
+            {
+                return Convert.ToChar(Convert.ToInt32('A') + code);
+            }
+            else
+            {
+                return '\0';
+            }
         }
         /* Cette fonction permet à un ordinateur de jouer un tour.
          */
