@@ -1,12 +1,13 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 
 namespace ProjetPendu
 {
     class Program
     {
 
-        enum FinDeTour
+        enum EtatPartie
         {
             Continue,
             Gagne,
@@ -15,8 +16,6 @@ namespace ProjetPendu
         }
         static void Main(string[] args)
         {
-            bool compris;
-            string reponse;
 
             string[] lexique = new string[323_572]; // c'est le nombre de mots dans le lexique
             InitLexique(lexique);
@@ -27,33 +26,28 @@ namespace ProjetPendu
 			while(envie_de_jouer) {
 				Partie(lexique);
 
-				compris = false; reponse = "";
-
-				while(!compris) {
-					Console.WriteLine("Voulez-vous refaire une partie ? (oui/non)");
-					reponse = Console.ReadLine();
-					if (String.Equals(reponse,"oui")) {
-						envie_de_jouer=true;
-						compris=true;
-					}
-					else {
-						if (String.Equals(reponse,"non")) {
-							envie_de_jouer=false;
-							compris = true;
-						}
-						else {
-							Console.Write("Je n'ai pas compris. ");
-						}
-					}
-					
-				}
+				envie_de_jouer = PoseQuestion("Voulez vous recommencer une partie ?");
 			}
+            Console.WriteLine("à bientôt !");
 
         }
         /* Permet de demander à l'utilisateur quel type de partie il veut lancer
         */
         static void Partie(string[] lexique)
         {
+            bool joueur = !PoseQuestion("Voulez-vous que l'ordinateur joue au pendu ?"); // joueur=true si l'utilisateur joue, false si l'ordinateur joue
+            
+            string reponse = joueur ? ChoisirMotHumain(lexique) : ChoisirMotOrdi(lexique);
+            string indice = ConstruitIndice(reponse);
+            bool[] estTentee = new bool[26];
+            EtatPartie etat = EtatPartie.Continue;
+
+            while(etat==EtatPartie.Continue)
+            {
+                
+            }
+
+
 
         }
         /* Initialise une partie où l'ordinateur choisit le mot et l'humain doit le trouver
@@ -71,11 +65,16 @@ namespace ProjetPendu
 
             return(lexique[position]);
         }
+
+        static string ChoisirMotHumain(string[] lexique)
+        {
+            return("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAH");
+        }
         /*Cette fonction permet à un joueur humain de jouer un tour
         */
         static void TourHumain()
         {
-
+                
         }
         /* Affiche les règles
         */
@@ -115,6 +114,45 @@ namespace ProjetPendu
                 }
             } 
         }
+        /* Pose une question fermée (string question). Si la réponse est oui/non, la fonction renvoie le booléen correspondant. Sinon, repose la question.
+        */
+        static bool PoseQuestion(string question) {
+            string reponse;
+            Console.WriteLine(question+" (oui/non)");
+
+            while(true) {
+                
+                reponse = Console.ReadLine();
+                if (String.Equals(reponse,"oui")) {
+                    return(true);
+                }
+                else {
+                    if (String.Equals(reponse,"non")) {
+                        return(false);
+                    }
+                    else {
+                        Console.Write("Je n'ai pas compris. Réponds par \"oui\" ou \"non\" !");
+                    }
+                }
+                Console.WriteLine(question);
+			}
+
+            
+        }
+
+        /* Construit la chaîne de caractère indice à partir de la réponse : change tous les caractères en '_' sauf les tirets. 
+        */
+        static string ConstruitIndice(string reponse)
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (char lettre in reponse)
+            {
+                sb.Append(lettre=='-' ? '-' : '_');
+            }
+
+            return(sb.ToString());
+        }
+
     }
 }
 
