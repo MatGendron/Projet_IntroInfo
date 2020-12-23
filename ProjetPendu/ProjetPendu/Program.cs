@@ -122,7 +122,21 @@ namespace ProjetPendu
         */
         static void AfficheRegle()
         {
-
+            Console.Write(
+                "==============================================================================================================\n" +
+                "                                                  JEU DU PENDU\n" +
+                "                                                  RÈGLES DU JEU\n" +
+                "==============================================================================================================\n" +
+                "Vous êtes sur l'échafaud sur le point d'être pendu haut et court mais vous avez une chance de vous en sortir !\n" +
+                "Trouvez le mot solution avant que tout votre corps soit sur la potence et vous serez gracié.\n" +
+                "Vous allez tout d'abord décider si vous voulez trouver le mot vous-même ou si vous préférer laisser\n" +
+                "l'ordinateur trouver votre mot.\n" +
+                "Si vous décidez de trouver le mot vous-même, vous pourrez saisir une lettre à chaque tour si elle est\n" +
+                "contenue dans le mot elle s'affichera dans l'indice, en revanche si elle ne l'est pas vous vous rapprocherez\n" +
+                "de la pendaison.\n" +
+                "" +
+                "Appuyez sur [entrer] pour continuer\n");
+            Console.ReadLine();
         }
         /* Cette fonction permet d'afficher le pendu et le mot à compléter
          */
