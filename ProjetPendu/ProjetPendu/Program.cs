@@ -41,20 +41,44 @@ namespace ProjetPendu
             string indice = ConstruitIndice(reponse);
             bool[] estTentee = new bool[26];
             EtatPartie etat = EtatPartie.Continue;
+            int degre = 0;
 
             while(etat==EtatPartie.Continue)
             {
-                
+                etat = Tour(joueur,reponse,indice,estTentee,degre);
             }
-
-
+            Console.WriteLine("Merci d'avoir joué !");
 
         }
-        /* Initialise une partie où l'ordinateur choisit le mot et l'humain doit le trouver
+        /* Joue un tour.
         */
-        static void PartieHumain(string[] lexique)
+        static EtatPartie Tour(
+                bool joueur,
+                string reponse,
+                string indice,
+                bool[] estTentee,
+                int degre
+            )
         {
+            AffichePendu(1);
 
+            string tentative = joueur ? ChoisirReponseHumain() : ChoisirReponseOrdi();
+
+
+            return(EtatPartie.Continue);
+        }
+
+        /* Fonction inopérante pour éviter que le vérificateur pleure. 
+        */
+        static string ChoisirReponseHumain()
+        {
+            return("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAH");
+        }
+        /* Fonction inopérante pour éviter que le vérificateur pleure. 
+        */
+        static string ChoisirReponseOrdi()
+        {
+            return("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAH");
         }
         /* Permet à l'ordinateur de choisir un mot aléatoirement dans le dictionnaire
         */
@@ -70,12 +94,7 @@ namespace ProjetPendu
         {
             return("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAH");
         }
-        /*Cette fonction permet à un joueur humain de jouer un tour
-        */
-        static void TourHumain()
-        {
-                
-        }
+
         /* Affiche les règles
         */
         static void AfficheRegle()
@@ -88,12 +107,7 @@ namespace ProjetPendu
         {
 
         }
-        /* Cette fonction permet à un ordinateur de jouer un tour.
-         */
-        static void TourOrdinateur()
-        {
 
-        }
         /* Ouvre le fichier dicoFR.txt et insère les mots dans le tableau.
         */
         static void InitLexique(string[] lexique)
