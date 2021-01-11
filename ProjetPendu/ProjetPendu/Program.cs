@@ -134,15 +134,71 @@ namespace ProjetPendu
                 "Si vous décidez de trouver le mot vous-même, vous pourrez saisir une lettre à chaque tour si elle est\n" +
                 "contenue dans le mot elle s'affichera dans l'indice, en revanche si elle ne l'est pas vous vous rapprocherez\n" +
                 "de la pendaison.\n" +
-                "" +
+                "Vous pouvez aussi saisir un mot en entier, si celui-ci est le mot solution vous gagnez, sinon vous\n" +
+                "perdez immédiatement." +
+                "A tout moment pendant votre tour vous pouvez saisir :\n" +
+                "- pour abandonner la partie.\n" +
+                "? pour afficher à nouveau ces règles.\n" +
                 "Appuyez sur [entrer] pour continuer\n");
             Console.ReadLine();
         }
         /* Cette fonction permet d'afficher le pendu et le mot à compléter
          */
-        static void AffichePendu(int degre)
+        static void AffichePendu(int degre, bool[] estTentee, string indice)
         {
-
+            Console.Write(
+                "            _______\n" +
+                "           |       |\n" +
+                "           |       ");
+            if (degre >= 1)
+            {
+                Console.Write("o");
+            }
+            else
+            {
+                Console.Write(" ");
+            }
+            Console.Write("\n" +
+            "           |      ");
+            if (degre >= 3) {
+                Console.Write("/"); 
+            }
+            else 
+            {
+                Console.Write(" ");
+            }
+            if (degre >= 2){
+                Console.Write("|");
+            } else {
+                Console.Write(" ");
+            }
+            if (degre >= 4) {
+                Console.Write("\\");
+            } else {
+                Console.Write(" ");
+            }
+            Console.Write("\n" +
+                "           |      ");
+            if (degre >= 5) {
+                Console.Write("/ ");
+            } else {
+                Console.Write("  ");
+            }
+            if (degre >= 6) {
+                Console.Write("\\");
+            } else {
+                Console.Write(" ");
+            }Console.Write("\n" +
+                "          -^-\n");
+            Console.WriteLine(indice);
+            for(int i=0; i<estTentee.Length; i++)
+            {
+                if (estTentee[i])
+                {
+                    Console.Write(IntToLettre(i)+" ");
+                }
+            }
+            Console.Write("\n");
         }
         /* Fonction convertissant une lettre en sa place dans l'alphabet
          */
