@@ -19,7 +19,7 @@ namespace ProjetPendu
             string[] lexique = new string[323_572]; // c'est le nombre de mots dans le lexique
             InitLexique(lexique);
 
-            /*AfficheRegle();
+            AfficheRegle();
 
             bool envie_de_jouer = true;
             while (envie_de_jouer)
@@ -28,8 +28,7 @@ namespace ProjetPendu
 
                 envie_de_jouer = PoseQuestion("Voulez vous recommencer une partie ?");
             }
-            Console.WriteLine("à bientôt !");*/
-            Console.WriteLine(lexique[1]);
+            Console.WriteLine("à bientôt !");
         }
         /* Permet de demander à l'utilisateur quel type de partie il veut lancer
         */
@@ -38,8 +37,8 @@ namespace ProjetPendu
             bool joueur = PoseQuestion("Voulez-vous que l'ordinateur joue au pendu ?"); // joueur=true si l'utilisateur joue, false si l'ordinateur joue
 
             string reponse = joueur ? ChoisirMotHumain(lexique) : ChoisirMotOrdi(lexique);
-            Console.WriteLine(reponse);
-            string indice = ConstruitIndice(reponse);
+            //Console.WriteLine(reponse);
+            char[] indice = ConstruitIndice(reponse);
             bool[] estTentee = new bool[26];
             EtatPartie etat = EtatPartie.Continue;
             int degre = 0;
@@ -47,6 +46,18 @@ namespace ProjetPendu
             while (etat == EtatPartie.Continue)
             {
                 etat = Tour(joueur, lexique, reponse, indice, estTentee, ref degre);
+            }
+            if (etat == EtatPartie.Perdu)
+            {
+                Console.WriteLine("       PERDU!!       ");
+            }
+            if (etat == EtatPartie.Abandon)
+            {
+                Console.WriteLine("      ABANDON!!      ");
+            }
+            if (etat == EtatPartie.Gagne)
+            {
+                Console.WriteLine("       BRAVO!!       ");
             }
             Console.WriteLine("Merci d'avoir joué !");
         }
@@ -57,14 +68,13 @@ namespace ProjetPendu
                 bool joueur,
                 string[] lexique,
                 string reponse,
-                string indice,
+                char[] indice,
                 bool[] estTentee,
                 ref int degre
             )
         {
             AffichePendu(degre, estTentee, indice);
-
-            string tentative = joueur ? ChoisirReponseHumain() : ChoisirReponseOrdi(estTentee);
+            string tentative = joueur ? ChoisirReponseOrdi(estTentee) : ChoisirReponseHumain();
             if (tentative.Length > 1)
             {
                 if (tentative != reponse)
@@ -92,12 +102,21 @@ namespace ProjetPendu
                     char lettre = tentative.ToCharArray()[0];
                     UpdateIndice(reponse, indice, lettre);
                     estTentee[LettreToInt(lettre)] = true;
+                    string test = new string(indice);
+                    if (test == reponse)
+                    {
+                        AffichePendu(degre, estTentee, indice);
+                        return EtatPartie.Gagne;
+                    }
                 }
                 else
                 {
+                    char lettre = tentative.ToCharArray()[0];
+                    estTentee[LettreToInt(lettre)] = true;
                     degre++;
                     if (degre >= 6)
                     {
+                        AffichePendu(degre, estTentee, indice);
                         return EtatPartie.Perdu;
                     }
                 }
@@ -107,7 +126,7 @@ namespace ProjetPendu
         /*Cette fonction permet à un être humain de choisir une réponse*/
         static string ChoisirReponseHumain()
         {
-            return Console.ReadLine();
+            return Console.ReadLine().ToUpper();
         }
 
         /*Cette fonction permet à l'ordinateur de choisir une lettre.*/
@@ -125,7 +144,7 @@ namespace ProjetPendu
             Random rnd = new Random();
             int position = rnd.Next(lexique.Length);
 
-            return (lexique[position]);
+            return (lexique[position].ToUpper());
         }
         /* Cette fonction permet de vérifier si un mot existe dans le lexique
          */
@@ -162,7 +181,7 @@ namespace ProjetPendu
         static string ChoisirMotHumain(string[] lexique)
         {
             Console.WriteLine("Choisissez un mot solution.");
-            string solution = Console.ReadLine();
+            string solution = Console.ReadLine().ToUpper();
             while (!MotExiste(lexique, solution))
             {
                 Console.WriteLine("Saisissez un mot solution valide :");
@@ -197,7 +216,7 @@ namespace ProjetPendu
         }
         /* Cette fonction permet d'afficher le pendu et le mot à compléter
          */
-        static void AffichePendu(int degre, bool[] estTentee, string indice)
+        static void AffichePendu(int degre, bool[] estTentee, char[] indice)
         {
             Console.Write(
                 "            _______\n" +
@@ -312,6 +331,7 @@ namespace ProjetPendu
                 if (mot.Length >= 2)
                 {
                     lexique[i] = mot;
+                    i++;
                 }
                     mot = lecteur.ReadLine();
             }
@@ -348,7 +368,7 @@ namespace ProjetPendu
 
         /* Construit la chaîne de caractère indice à partir de la réponse : change tous les caractères en '_' sauf les tirets. 
         */
-        static string ConstruitIndice(string reponse)
+        static char[] ConstruitIndice(string reponse)
         {
             StringBuilder sb = new StringBuilder();
             foreach (char lettre in reponse)
@@ -356,20 +376,18 @@ namespace ProjetPendu
                 sb.Append(lettre == '-' ? '-' : '_');
             }
 
-            return (sb.ToString());
+            return (sb.ToString().ToCharArray());
         }
 
         /* Met à jour l'indice avec une lettre trouvée par le joueur.
          */
-        static void UpdateIndice(string reponse, string indice, char lettre)
+        static void UpdateIndice(string reponse, char[] indice, char lettre)
         {
             for(int i=0; i<reponse.Length; i++)
             {
                 if (reponse[i] == lettre)
                 {
-                    StringBuilder sb = new StringBuilder(indice);
-                    sb[i] = lettre;
-                    indice = sb.ToString();
+                    indice[i] = lettre;
                 }
             }
         }
