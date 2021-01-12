@@ -64,6 +64,27 @@ namespace ProjetPendu
 
             string tentative = joueur ? ChoisirReponseHumain() : ChoisirReponseOrdi();
 
+            if (tentative == "-")
+            {
+                return(EtatPartie.Abandon);
+            }
+            if (tentative == "?")
+            {
+                AfficheRegle();
+                return(EtatPartie.Continue);
+            }
+
+            if (tentative.Length == 1)
+            { // Cas où 1 caractère est entré, ChoisirReponseHumain/ChoisirReponseOrdi suppose que c'est 
+                if (estTentee[LettreToInt(tentative[9])])
+                {
+                    Console.WriteLine("Tu as déjà testé cette lettre !!");
+                    return(EtatPartie.Continue);
+                }
+                
+                
+
+            }
 
             return(EtatPartie.Continue);
         }
@@ -106,6 +127,34 @@ namespace ProjetPendu
         static void AffichePendu(int degre)
         {
 
+        }
+         /* Fonction convertissant une lettre en sa place dans l'alphabet
+         */
+        static int LettreToInt(char lettre)
+        {
+            lettre = Char.ToUpper(lettre);
+            int code = Convert.ToInt32(lettre)-Convert.ToInt32('A');
+            if(code >=0 && code <= 25)
+            {
+                return code;
+            }
+            else
+            {
+                return -1;
+            }
+        }
+        /* Fonction convertissant un entier en la lettre correspondante dans l'alphabet
+         */
+        static char IntToLettre(int code)
+        {
+            if(code >=0 && code <= 25)
+            {
+                return Convert.ToChar(Convert.ToInt32('A') + code);
+            }
+            else
+            {
+                return '\0';
+            }
         }
 
         /* Ouvre le fichier dicoFR.txt et insère les mots dans le tableau.
