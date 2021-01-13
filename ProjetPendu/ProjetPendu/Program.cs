@@ -222,7 +222,7 @@ namespace ProjetPendu
                         if (indice.Length == lexique[i].Length)
                         {
                             int j = 0;
-                            while(j<indice.Length && (indice[j] == lexique[i][j] || indice[j]=='.'))
+                            while(j<indice.Length && (indice[j] == lexique[i][j] || (indice[j]=='.' && (lexique[i][j]=='-' || !estTentee[LettreToInt(lexique[i][j])]))))
                             {
                                 j++;
                             }
