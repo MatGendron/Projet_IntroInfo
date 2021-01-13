@@ -368,7 +368,7 @@ namespace ProjetPendu
         static void InitLexique(string[] lexique)
         {
             System.Text.Encoding encoding = System.Text.Encoding.GetEncoding("iso-8859-1");
-            StreamReader lecteur = new StreamReader("../dicoFR.txt", encoding);
+            StreamReader lecteur = new StreamReader("dicoFR.txt", encoding);
 
             string mot = lecteur.ReadLine();
             int i = 0;
