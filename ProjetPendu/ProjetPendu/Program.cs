@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace ProjetPendu
 {
@@ -21,12 +22,12 @@ namespace ProjetPendu
 
             AfficheRegle();
 
-            bool envie_de_jouer = true;
-            while (envie_de_jouer)
+            bool envieDeJouer = true;
+            while (envieDeJouer)
             {
                 Partie(lexique);
 
-                envie_de_jouer = PoseQuestion("Voulez vous recommencer une partie ?");
+                envieDeJouer = PoseQuestion("Voulez vous recommencer une partie ?");
             }
             Console.WriteLine("à bientôt !");
         }
@@ -50,14 +51,17 @@ namespace ProjetPendu
             if (etat == EtatPartie.Perdu)
             {
                 Console.WriteLine("       PERDU!!       ");
+                Console.WriteLine("Le mot à deviner était : {0}",reponse);
             }
             if (etat == EtatPartie.Abandon)
             {
                 Console.WriteLine("      ABANDON!!      ");
+                Console.WriteLine("Le mot à deviner était : {0}",reponse);
             }
             if (etat == EtatPartie.Gagne)
             {
                 Console.WriteLine("       BRAVO!!       ");
+                Console.WriteLine("Le mot à deviner était bien \"{0}\"",reponse);
             }
             Console.WriteLine("Merci d'avoir joué !");
         }
@@ -75,31 +79,41 @@ namespace ProjetPendu
         {
             AffichePendu(degre, estTentee, indice);
             string tentative = joueur ? ChoisirReponseOrdi(estTentee) : ChoisirReponseHumain();
-            if (tentative.Length > 1)
+
+            // Le joueur abandonne
+            if (tentative == "-")
             {
-                if (tentative != reponse)
-                {
-                    return EtatPartie.Perdu;
-                }
-                else
-                {
-                    return EtatPartie.Gagne;
-                }
+                return EtatPartie.Abandon;
             }
-            else if(tentative.Length==1)
+            // Le joueur demande les règles
+            if(tentative == "?")
             {
-                if (tentative == "-")
+                AfficheRegle();
+                return EtatPartie.Continue;
+            }
+
+            
+            if (tentative.Length == 1)
+            // Une lettre est tentée
+            {
+
+                char lettre = tentative.ToCharArray()[0];
+
+                // La lettre a déjà été proposée.
+                if (estTentee[LettreToInt(lettre)])
                 {
-                    return EtatPartie.Abandon;
-                }
-                if(tentative == "?")
-                {
-                    AfficheRegle();
+                    Console.WriteLine("La lettre a déjà été proposée ! Soit plus attentif.");
+                    degre++;
+                    if (degre >= 6)
+                    {
+                        AffichePendu(degre, estTentee, indice);
+                        return EtatPartie.Perdu;
+                    }
                     return EtatPartie.Continue;
                 }
-                if (reponse.Contains(tentative))
+
+                if (reponse.Contains(lettre))
                 {
-                    char lettre = tentative.ToCharArray()[0];
                     UpdateIndice(reponse, indice, lettre);
                     estTentee[LettreToInt(lettre)] = true;
                     string test = new string(indice);
@@ -108,10 +122,11 @@ namespace ProjetPendu
                         AffichePendu(degre, estTentee, indice);
                         return EtatPartie.Gagne;
                     }
+
+                    return EtatPartie.Continue;
                 }
                 else
                 {
-                    char lettre = tentative.ToCharArray()[0];
                     estTentee[LettreToInt(lettre)] = true;
                     degre++;
                     if (degre >= 6)
@@ -120,13 +135,52 @@ namespace ProjetPendu
                         return EtatPartie.Perdu;
                     }
                 }
+
             }
-            return (EtatPartie.Continue);
+            else
+            // Un mot est tenté
+            {
+                if (!MotExiste(lexique,tentative))
+                {
+                    Console.WriteLine("Ce mot n'existe pas ! Choisissez un mot de la langue française");
+                    return EtatPartie.Continue;
+                }
+
+                if (tentative == reponse)
+                {
+                    return EtatPartie.Gagne;
+                }
+                else // Le mot proposé n'est pas égal au mot à trouver.
+                {
+                    degre++;
+                    if (degre >= 6)
+                    {
+                        AffichePendu(degre, estTentee, indice);
+                        return EtatPartie.Perdu;
+                    }
+                    return EtatPartie.Continue;
+                }
+            }
+
+            return EtatPartie.Continue;
         }
         /*Cette fonction permet à un être humain de choisir une réponse*/
         static string ChoisirReponseHumain()
         {
-            return Console.ReadLine().ToUpper();
+            Regex regex = new Regex(@"\?|[a-zA-Z\-]+");
+            
+            string entree;
+
+            Console.WriteLine("Entrez une lettre ; un mot ; '?' pour obtenir les règles ; '-' pour abandonner");
+            entree = Console.ReadLine();
+
+            while (!regex.IsMatch(entree))
+            {
+                Console.WriteLine("Respectez les consignes !!! (les accents et apostrophes ne sont pas acceptés)");
+                entree = Console.ReadLine();
+
+            }
+            return entree.ToUpper();
         }
 
         /*Cette fonction permet à l'ordinateur de choisir une lettre.*/
@@ -166,14 +220,8 @@ namespace ProjetPendu
                     milieu = (fin + debut) / 2;
                 }
             }
-            if (lexique[milieu] == mot)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return (lexique[milieu] == mot);
+            
 
         }
         /* Permet à un joueur humain de choisir un mot
@@ -320,7 +368,7 @@ namespace ProjetPendu
         static void InitLexique(string[] lexique)
         {
             System.Text.Encoding encoding = System.Text.Encoding.GetEncoding("iso-8859-1");
-            StreamReader lecteur = new StreamReader("../../../../../dicoFR.txt", encoding);
+            StreamReader lecteur = new StreamReader("../dicoFR.txt", encoding);
 
             string mot = lecteur.ReadLine();
             int i = 0;
@@ -366,14 +414,14 @@ namespace ProjetPendu
             }
         }
 
-        /* Construit la chaîne de caractère indice à partir de la réponse : change tous les caractères en '_' sauf les tirets. 
+        /* Construit la chaîne de caractère indice à partir de la réponse : change tous les caractères en '.' sauf les tirets. 
         */
         static char[] ConstruitIndice(string reponse)
         {
             StringBuilder sb = new StringBuilder();
             foreach (char lettre in reponse)
             {
-                sb.Append(lettre == '-' ? '-' : '_');
+                sb.Append(lettre == '-' ? '-' : '.');
             }
 
             return (sb.ToString().ToCharArray());
