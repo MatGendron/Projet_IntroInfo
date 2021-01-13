@@ -2,6 +2,7 @@
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Collections.Generic;
 
 namespace ProjetPendu
 {
@@ -41,12 +42,15 @@ namespace ProjetPendu
             //Console.WriteLine(reponse);
             char[] indice = ConstruitIndice(reponse);
             bool[] estTentee = new bool[26];
+            string[] recherche = new string[lexique.Length];
+            int tailleRecherche = 0;
+            List<string> motTente = new List<string>();
             EtatPartie etat = EtatPartie.Continue;
             int degre = 0;
 
             while (etat == EtatPartie.Continue)
             {
-                etat = Tour(joueur, lexique, reponse, indice, estTentee, ref degre);
+                etat = Tour(joueur, lexique, reponse, indice, estTentee, ref degre, recherche, ref tailleRecherche, motTente);
             }
             if (etat == EtatPartie.Perdu)
             {
@@ -74,11 +78,14 @@ namespace ProjetPendu
                 string reponse,
                 char[] indice,
                 bool[] estTentee,
-                ref int degre
+                ref int degre,
+                string[] recherche,
+                ref int tailleRecherche,
+                List<string> motTente
             )
         {
             AffichePendu(degre, estTentee, indice);
-            string tentative = joueur ? ChoisirReponseOrdi(estTentee) : ChoisirReponseHumain();
+            string tentative = joueur ? ChoisirReponseOrdi(estTentee, lexique,indice, recherche, ref tailleRecherche, motTente) : ChoisirReponseHumain();
 
             // Le joueur abandonne
             if (tentative == "-")
@@ -183,12 +190,62 @@ namespace ProjetPendu
             return entree.ToUpper();
         }
 
-        /*Cette fonction permet à l'ordinateur de choisir une lettre.*/
-        static string ChoisirReponseOrdi(bool[] estTentee)
+        /*Cette fonction permet à l'ordinateur de choisir une lettre ou une possible réponse.*/
+        static string ChoisirReponseOrdi(bool[] estTentee, string[] lexique, char[] indice, string[] recherche, ref int tailleRecherche, List<string> motTente)
         {
-            Random rnd = new Random();
-            int position = rnd.Next(estTentee.Length);
-            return IntToLettre(position).ToString();
+            if (!estTentee[LettreToInt('A')])
+            {
+                return ("A");
+            }
+            else if (!estTentee[LettreToInt('E')])
+            {
+                return ("E");
+            }
+            else if (!estTentee[LettreToInt('I')])
+            {
+                return ("I");
+            }
+            else if (!estTentee[LettreToInt('O')])
+            {
+                return ("O");
+            }
+            else if (!estTentee[LettreToInt('U')])
+            {
+                return ("U");
+            }
+            else
+            {
+                if (recherche[0] == null)
+                {
+                    for(int i=0; i<lexique.Length; i++)
+                    {
+                        if (indice.Length == lexique[i].Length)
+                        {
+                            int j = 0;
+                            while(j<indice.Length && (indice[j] == lexique[i][j] || indice[j]=='.'))
+                            {
+                                j++;
+                            }
+                            if (j == indice.Length)
+                            {
+                                recherche[tailleRecherche] = lexique[i];
+                                tailleRecherche++;
+                            }
+                        }
+                    }
+                }
+                Random rnd = new Random();
+                int position = rnd.Next(tailleRecherche);
+                string tentative = recherche[position];
+                while (motTente.Contains(tentative))
+                {
+                    position = rnd.Next(tailleRecherche);
+                    tentative = recherche[position];
+                }
+                motTente.Add(tentative);
+                Console.WriteLine(tentative);
+                return tentative;
+            }
         }
 
         /* Permet à l'ordinateur de choisir un mot aléatoirement dans le dictionnaire
